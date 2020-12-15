@@ -19,9 +19,9 @@ def get_content_history(content):
     clear()
     soup = BeautifulSoup(content,'html.parser')
     for content in soup.find_all('div',class_="contenedor-post cuentos"):
-        print(f"\t{content.h1.text}")
+        loggin.info(f"\t{content.h1.text}")
         for history in content.find_all('p'):
-            print(history.text)
+            loggin.info(f'{history.text}')
             
 
 def get_menu_history(lista,soup):
@@ -31,7 +31,7 @@ def get_menu_history(lista,soup):
             title = menu_history.text
             count +=1
             lista.append(link)
-            print(str(count)+".",title)
+            loggin.info(str(count)+".",title)
     return lista
 
 def get_menu_items(menu,func):
@@ -54,7 +54,7 @@ def get_sub_history(content):
     title = soup.find('h2')
     links =[]
     clear()
-    print(f"\t{title.text}")
+    loggin.info(f"\t{title.text}"))
     menu = get_menu_history(links,soup)
     get_menu_items(menu,get_content_history)
     
