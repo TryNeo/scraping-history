@@ -3,7 +3,7 @@ import logging
 import threading
 import requests
 from bs4 import BeautifulSoup
-
+import os 
 logging.basicConfig(
     level = logging.INFO,
     format='%(message)s'
@@ -12,56 +12,50 @@ logging.basicConfig(
 URL = 'https://www.mundoprimaria.com'
 DOMAIN = '/cuentos-infantiles-cortos'
 
-def get_sub_history(content):
-    soup = BeautifulSoup(content,'html.parser')
-        
+def get_content_history(content):
+    pass
 
-def get_response_history(content):
-    soup = BeautifulSoup(content,'html.parser')
+
+def get_menu_history(lista,soup):
     count=0
-    links = []
-    print("\tCuentos cortos infantiles\n")
     for menu_history in soup.find_all('div',class_='boton-con-titulo solo-imagen'):
-        link = menu_history.a['href']
-        title = menu_history.a.h3.text
-        count +=1
-        links.append(link)
-        print(str(count)+".",title)
+            link = menu_history.a['href']
+            title = menu_history.text
+            count +=1
+            lista.append(link)
+            print(str(count)+".",title)
+    return lista
 
-    
-    op = int(input(f'opciones de [1 - {str(count)}]:'))
-    
-    if op == int(len(link[0])):
+def get_menu_items(menu):
+    op = int(input(f'opciones:'))
+    if op < len(menu):
         thread_terror = threading.Thread(
             target=generate_reponse,
             kwargs={
-                'url':URL+links[0],
+                'url':URL+menu[op],
                 'success_callback':get_sub_history,
                 'error_callback':error
             }
         )
         thread_terror.start()
-    elif op == int(len(link[1])):
-        pass
-    elif op == int(len(link[2])):
-        pass
-    elif op == int(len(link[3])):
-        pass
-    elif op == int(len(link[4])):
-        pass
-    elif op == int(len(link[5])):
-        pass
-    elif op == int(len(link[6])):
-        pass
-    elif op == int(len(link[7])):
-        pass
-    elif op == int(len(link[8])):
-        pass
-    elif op == int(len(link[9])):
-        pass
     else:
-      logging.info('Opcion del menu no existente')
+        logging.info('Ops lo siento opcion no valida')
+
+def get_sub_history(content):
+    soup = BeautifulSoup(content,'html.parser')
+    title = soup.find('h2')
+    links =[]
+    os.system('clear')
+    print(f"\t{title.text}")
+    menu = get_menu_history(links,soup)
     
+    
+def get_response_history(content):
+    soup = BeautifulSoup(content,'html.parser')
+    links = []
+    print("\tCuentos cortos infantiles\n")
+    menu = get_menu_history(links,soup)
+    get_menu_items(menu)
         
 def error():
     logging.error('Ops Lo siento error de Conexion')
