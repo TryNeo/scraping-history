@@ -12,9 +12,17 @@ logging.basicConfig(
 URL = 'https://www.mundoprimaria.com'
 DOMAIN = '/cuentos-infantiles-cortos'
 
-def get_content_history(content):
-    pass
+def clear():
+    return os.system('clear')
 
+def get_content_history(content):
+    clear()
+    soup = BeautifulSoup(content,'html.parser')
+    for content in soup.find_all('div',class_="contenedor-post cuentos"):
+        print(f"\t{content.h1.text}")
+        for history in content.find_all('p'):
+            print(history.text)
+            
 
 def get_menu_history(lista,soup):
     count=0
@@ -26,14 +34,14 @@ def get_menu_history(lista,soup):
             print(str(count)+".",title)
     return lista
 
-def get_menu_items(menu):
+def get_menu_items(menu,func):
     op = int(input(f'opciones:'))
     if op < len(menu):
         thread_terror = threading.Thread(
             target=generate_reponse,
             kwargs={
                 'url':URL+menu[op],
-                'success_callback':get_sub_history,
+                'success_callback':func,
                 'error_callback':error
             }
         )
@@ -45,17 +53,17 @@ def get_sub_history(content):
     soup = BeautifulSoup(content,'html.parser')
     title = soup.find('h2')
     links =[]
-    os.system('clear')
+    clear()
     print(f"\t{title.text}")
     menu = get_menu_history(links,soup)
-    
+    get_menu_items(menu,get_content_history)
     
 def get_response_history(content):
     soup = BeautifulSoup(content,'html.parser')
     links = []
     print("\tCuentos cortos infantiles\n")
     menu = get_menu_history(links,soup)
-    get_menu_items(menu)
+    get_menu_items(menu,get_sub_history)
         
 def error():
     logging.error('Ops Lo siento error de Conexion')
